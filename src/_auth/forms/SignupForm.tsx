@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import Loader from '@/components/ui/shared/Loader';
+import { createUserAccount } from '@/lib/appwrite/api';
 import { SignupValidation } from '@/lib/validation';
 import { Link } from 'react-router-dom';
 
@@ -31,10 +32,11 @@ const SignupForm = () => {
 	});
 
 	// Define a submit handler.
-	function onSubmit(values: z.infer<typeof SignupValidation>) {
-		// Do something with the form values.
+	async function onSubmit(values: z.infer<typeof SignupValidation>) {
+		// create a new account with the form values.
 		// ✅ This will be type-safe and validated.
-		console.log(values);
+		const newUser = await createUserAccount(values);
+		console.log(newUser);
 	}
 	return (
 		<Form {...form}>
