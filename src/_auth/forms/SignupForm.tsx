@@ -10,7 +10,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { useCreateUserAccount } from '@/lib/react-query/queriesAndMutations';
+import {
+	useCreateUserAccount,
+	useSignInAccount,
+} from '@/lib/react-query/queriesAndMutations';
 import { SignupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -24,6 +27,11 @@ const SignupForm = () => {
 	//call the create new Account react query Mutation hook
 	const { mutateAsync: createUserAccount, isLoading: isCreatingAccount } =
 		useCreateUserAccount();
+
+	//call the sign in Account react query Mutation hook
+
+	const { mutateAsync: signInAccount, isLoading: isSigningInAccount } =
+		useSignInAccount();
 
 	// Define your form.
 	const form = useForm<z.infer<typeof SignupValidation>>({
@@ -47,7 +55,14 @@ const SignupForm = () => {
 			return toast({ title: 'Sign up failed. Please try again' });
 		}
 
-		// const section = awit signInAccount()
+		const session = await signInAccount({
+			email: values.email,
+			password: values.password,
+		});
+
+		if (!session) {
+			return toast({ title: 'Sign in failed. Please try again' });
+		}
 	}
 	return (
 		<Form {...form}>
