@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { createUserAccount } from '@/lib/appwrite/api';
+import { useCreateUserAccount } from '@/lib/react-query/queriesAndMutations';
 import { SignupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -18,8 +18,13 @@ import { Link } from 'react-router-dom';
 import { z } from 'zod';
 
 const SignupForm = () => {
-	const isLoading = false;
+	// const isLoading = false;
 	const { toast } = useToast();
+
+	//call the create new Account react query Mutation hook
+	const { mutateAsync: createUserAccount, isLoading: isCreatingAccount } =
+		useCreateUserAccount();
+
 	// Define your form.
 	const form = useForm<z.infer<typeof SignupValidation>>({
 		resolver: zodResolver(SignupValidation),
@@ -41,6 +46,8 @@ const SignupForm = () => {
 		if (!newUser) {
 			return toast({ title: 'Sign up failed. Please try again' });
 		}
+
+		// const section = awit signInAccount()
 	}
 	return (
 		<Form {...form}>
@@ -131,7 +138,7 @@ const SignupForm = () => {
 						)}
 					/>
 					<Button type="submit" className="shad-button_primary">
-						{isLoading ? (
+						{isCreatingAccount ? (
 							<div className="flex-center gap-2">
 								<Loader />
 								loading...
