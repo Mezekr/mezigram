@@ -10,8 +10,9 @@ export async function createUserAccount(user: INewUser) {
 			user.password,
 			user.name
 		);
-
 		if (!newAccount) throw Error;
+		console.log(account);
+		console.log(newAccount);
 
 		const avatorUrl = avatars.getInitials(user.name);
 
@@ -22,7 +23,7 @@ export async function createUserAccount(user: INewUser) {
 			username: user.username,
 			imageUrl: avatorUrl,
 		});
-
+		console.log('saveUserToDB newuser  ' + newUser);
 		return newUser;
 	} catch (error) {
 		console.log(error);
@@ -44,7 +45,7 @@ export async function saveUserToDB(user: {
 			ID.unique(),
 			user
 		);
-
+		console.log('createDocument newuser' + newUser);
 		return newUser;
 	} catch (error) {
 		console.log(error);
@@ -53,7 +54,11 @@ export async function saveUserToDB(user: {
 
 export async function signInAccount(user: { email: string; password: string }) {
 	try {
-		const session = await account.createSession(user.email, user.password);
+		const session = await account.createEmailPasswordSession(
+			user.email,
+			user.password
+		);
+		console.log('session created' + session);
 
 		return session;
 	} catch (error) {
@@ -61,9 +66,19 @@ export async function signInAccount(user: { email: string; password: string }) {
 	}
 }
 
-export async function getCurrentUser() {
+export async function getAccount() {
 	try {
 		const currentAccount = await account.get();
+
+		return currentAccount;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getCurrentUser() {
+	try {
+		const currentAccount = await getAccount();
 
 		if (!currentAccount) throw Error;
 
@@ -78,5 +93,6 @@ export async function getCurrentUser() {
 		return currentUser.documents[0];
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 }
